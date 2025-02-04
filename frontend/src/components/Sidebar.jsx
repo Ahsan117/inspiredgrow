@@ -107,8 +107,8 @@ const Sidebar = ({ setContent }) => {
         {isSidebarOpen && (
           <div>
             {/* Sidebar Title */}
-            <div className="p-4 text-xl font-bold border-b border-gray-700 flex justify-between">
-              <span>Dashboard</span>
+            <div className="p-4 text-xl font-bold border-b border-gray-700 flex justify-between cursor-pointer">
+              <span onClick={() => navigate("/dashboard")}>Dashboard</span>
               {/* <FaTimes
                 size={20}
                 className="cursor-pointer hover:text-gray-400"
@@ -134,13 +134,13 @@ const Sidebar = ({ setContent }) => {
                   <ul className="ml-8 bg-gray-800">
                     <li
                       className="p-3 hover:bg-gray-700 cursor-pointer"
-                      onClick={() => navigate("/dashboard/user/add")}
+                      onClick={() => navigate("/admin/user/list")}
                     >
-                      Add User
+                      Users List
                     </li>
                     <li
                       className="p-3 hover:bg-gray-700 cursor-pointer"
-                      onClick={() => navigate("/dashboard/user/manage")}
+                      onClick={() => navigate("/admin/role/list")}
                     >
                       Roles List
                     </li>

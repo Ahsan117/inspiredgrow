@@ -27,6 +27,7 @@
 // };
 
 // export default AdminDashboard;
+import AddUser from "../components/AddUser";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
@@ -40,6 +41,7 @@ const AdminDashboard = () => {
           <h2 className="text-2xl font-bold text-gray-700 mb-4">
             Admin Dashboard
           </h2>
+          {/* <AddUser /> */}
           {/* <AddUser /> */}
         </div>
       </div>
