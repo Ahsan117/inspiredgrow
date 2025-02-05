@@ -101,7 +101,7 @@ const Sidebar = ({ setContent }) => {
       <div
         className={`${
           isSidebarOpen ? "w-64" : "w-0"
-        } bg-gray-900 text-white h-screen overflow-y-auto transition-all duration-300`}
+        } bg-gray-900 text-white h-full overflow-y-auto transition-all duration-300`}
       >
         {/* Sidebar Content */}
         {isSidebarOpen && (

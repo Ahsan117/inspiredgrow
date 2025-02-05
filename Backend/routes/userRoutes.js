@@ -6,3 +6,4 @@ const router = express.Router();
 router.post("/add-user", authMiddleware, isAdmin, addUser);
 
 module.exports = router;
+// this is the admin given by chatgpt

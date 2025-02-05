@@ -1,8 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const UserLogin = () => {
-  const [user, setUser] = useState({ email: "", password: "" });
+  const [user, setUser] = useState({ Email: "", Password: "" });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -11,8 +13,9 @@ const UserLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/auth/login", user);
+      await axios.post("http://localhost:5000/admiaddinguser/userlogin", user);
       alert("User logged in successfully!");
+      navigate("/dashboard");
     } catch (err) {
       alert("Login failed.");
     }
@@ -27,8 +30,8 @@ const UserLogin = () => {
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <input
-              type="email"
-              name="email"
+              type="Email"
+              name="Email"
               placeholder="Email"
               onChange={handleChange}
               required
@@ -37,7 +40,7 @@ const UserLogin = () => {
           </div>
           <div className="mb-6">
             <input
-              type="password"
+              type="Password"
               name="password"
               placeholder="Password"
               onChange={handleChange}

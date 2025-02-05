@@ -73,7 +73,7 @@ const AdminRegister = () => {
     try {
       await axios.post("http://localhost:5000/auth/register-admin", admin);
       alert("Admin registered successfully!");
-      navigate("/admin-login");
+      navigate("/");
     } catch (err) {
       alert("Registration failed. Try again.");
     }
