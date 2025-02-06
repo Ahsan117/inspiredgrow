@@ -310,6 +310,7 @@
 
 // export default StoreTab;
 import React, { useState } from "react";
+import axios from "axios";
 
 const StoreTab = () => {
   const countries = {
@@ -334,14 +335,63 @@ const StoreTab = () => {
   const [state, setState] = useState("");
   const [City, setCity] = useState("");
   const [Address, setAddress] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [warehousesGroup, setWarehousesGroup] = useState("System Warehouse");
-  const [defaultWarehouse, setDefaultWarehouse] = useState("System Warehouse");
+
   const [profilePicture, setProfilePicture] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Handle form submission logic here
+    const formData = {
+      StoreCode: username,
+      StoreName: firstName,
+      Mobile: mobile,
+      Email: email,
+      Phone: Phone,
+      Gst_Number: GST_NUMBER,
+      Tax_Number: Tax_Number,
+      Pan_Number: Pan_Number,
+      Store_website: store_website,
+      Bank_details: Bank_Details,
+      Country: Country,
+      State: state,
+      City: City,
+      PostCode: PostCode,
+      Address: Address,
+    };
+    try {
+      const response = await fetch(
+        "http://localhost:5000/admin/Store/add/Store",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to create store");
+      }
+      const result = await response.json();
+      console.log("Store created successfully", result);
+      setUsername(" ");
+      setFirstName(" ");
+      setMobile("");
+      setEmail("");
+      setPhone("");
+      setGST_NUMBER("");
+      setTax_Number("");
+      setPan_Number("");
+      setstore_website("");
+      setBank_Details("");
+      setCountry("");
+      setState("");
+      setCity("");
+      setPostCode("");
+      setAddress("");
+    } catch (error) {
+      console.error("Error", error);
+    }
   };
 
   const handleProfilePictureChange = (e) => {
