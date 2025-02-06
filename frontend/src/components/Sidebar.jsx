@@ -160,13 +160,13 @@ const Sidebar = ({ setContent }) => {
                   <ul className="ml-8 bg-gray-800">
                     <li
                       className="p-3 hover:bg-gray-700 cursor-pointer"
-                      onClick={() => navigate("/dashboard/store/add")}
+                      onClick={() => navigate("/store/add")}
                     >
                       Add Store
                     </li>
                     <li
                       className="p-3 hover:bg-gray-700 cursor-pointer"
-                      onClick={() => navigate("/dashboard/store/view")}
+                      onClick={() => navigate("/store/view")}
                     >
                       Store List
                     </li>
