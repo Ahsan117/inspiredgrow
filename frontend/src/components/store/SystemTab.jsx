@@ -29,28 +29,56 @@
 
 // export default StoreTab;
 import React, { useState } from "react";
+import axios from "axios";
 
 const SystemTab = () => {
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("hisargow");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [warehousesGroup, setWarehousesGroup] = useState("System Warehouse");
-  const [defaultWarehouse, setDefaultWarehouse] = useState("System Warehouse");
-  const [profilePicture, setProfilePicture] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Handle form submission logic here
+    const formData = {
+      Timezone: username,
+      Dateformat: firstName,
+      TimeFormat: mobile,
+      Currency: email,
+      CurrencySymbolPlacement: email,
+      Decimals: email,
+      DecimalforQuantity: email,
+      Language: email,
+    };
+    try {
+      const response = await fetch(
+        "http://localhost:5000/admin/Store/add/systemzone",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to create timezone");
+      }
+      const result = await response.json();
+      console.log("Store created successfully", result);
+      setUsername(" ");
+      setFirstName(" ");
+      setMobile("");
+      setEmail("");
+    } catch (Err) {
+      console.log("Error found", Err);
+    }
   };
 
-  const handleProfilePictureChange = (e) => {
-    setProfilePicture(e.target.files[0]);
-  };
+  // const handleProfilePictureChange = (e) => {
+  //   setProfilePicture(e.target.files[0]);
+  // };
 
   return (
     <div className=" mx-auto overflow-y-auto ">
@@ -62,7 +90,7 @@ const SystemTab = () => {
             <div className="space-y-4 w-full">
               <div>
                 <label htmlFor="username" className="block font-medium mb-2">
-                  Timezone*
+                  TimeZone*
                 </label>
                 <input
                   id="username"
@@ -176,8 +204,8 @@ const SystemTab = () => {
                 </label>
                 <select
                   id="defaultWarehouse"
-                  value={defaultWarehouse}
-                  onChange={(e) => setDefaultWarehouse(e.target.value)}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full border border-gray-300 rounded-md px-3 py-2"
                   required
                 >
