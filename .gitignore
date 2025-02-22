@@ -13,3 +13,4 @@ Backend/.env
 *.log
 npm-debug.log
 yarn-error.log
+.vercel
