@@ -35,7 +35,7 @@ const AddUser = () => {
     try {
       // Make the POST request
       const response = await axios.post(
-        "http://localhost:5000/admiaddinguser/adduserbyadmin",
+        "http://192.168.1.13:5000/admiaddinguser/adduserbyadmin",
         userData,
         {
           headers: {

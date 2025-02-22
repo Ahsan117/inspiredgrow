@@ -360,7 +360,7 @@ const StoreTab = () => {
     };
     try {
       const response = await fetch(
-        "http://localhost:5000/admin/Store/add/Store",
+        "http://192.168.1.13:5000/admin/Store/add/Store",
         {
           method: "POST",
           headers: {

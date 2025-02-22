@@ -116,7 +116,7 @@ const UserList = () => {
 
   // Fetch user list from API
   useEffect(() => {
-    fetch("http://localhost:5000/admiaddinguser/userlist")
+    fetch("http://192.168.1.13:5000/admiaddinguser/userlist")
       .then((response) => response.json())
       .then((data) => {
         console.log("API Response:", data);

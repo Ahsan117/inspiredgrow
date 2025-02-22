@@ -1,272 +1,191 @@
-// // const Sidebar = () => {
-// //   return (
-// //     <div
-// //       style={{
-// //         width: "200px",
-// //         background: "#333",
-// //         color: "white",
-// //         height: "100vh",
-// //       }}
-// //     >
-// //       <h3>Dashboard</h3>
-// //       <ul>
-// //         <li>Add User</li>
-// //       </ul>
-// //     </div>
-// //   );
-// // };
-
-// // export default Sidebar;
-
-// import { useState } from "react";
-// import { Link } from "react-router-dom";
-// // import { FaBars, FaTimes } from "react-icons/fa";
-
-// const Sidebar = () => {
-//   const [isOpen, setIsOpen] = useState(false);
-
-//   const toggleSidebar = () => {
-//     setIsOpen(!isOpen);
-//   };
-
-//   return (
-//     <div className="relative">
-//       {/* Hamburger Menu for Mobile */}
-//       <button
-//         onClick={toggleSidebar}
-//         className="lg:hidden absolute top-4 left-4 text-white text-2xl"
-//       >
-//         <i className={isOpen ? "fas fa-times" : "fas fa-bars"}></i>
-//       </button>
-
-//       <aside
-//         className={`lg:w-64 bg-gray-800 text-white h-screen p-4 shadow-lg transition-all duration-300 ${
-//           isOpen ? "block" : "hidden lg:block"
-//         }`}
-//       >
-//         <h3 className="text-lg font-semibold mb-6">Dashboard Menu</h3>
-//         <ul className="space-y-4">
-//           <li>
-//             <Link
-//               to="/admin-dashboard"
-//               className="block px-4 py-2 hover:bg-gray-700 rounded transition"
-//             >
-//               Home
-//             </Link>
-//           </li>
-//           <li>
-//             <Link
-//               to="/admin/add-user"
-//               className="block px-4 py-2 hover:bg-gray-700 rounded transition"
-//             >
-//               Add User
-//             </Link>
-//           </li>
-//         </ul>
-//       </aside>
-//     </div>
-//   );
-// };
-
-// export default Sidebar;
-// ===========================
 import { useState } from "react";
-import { FaBars, FaUsers, FaAngleDown, FaAngleUp } from "react-icons/fa";
+import { FaBars, FaUsers, FaStore, FaCog, FaAngleDown, FaAngleUp, FaRegComment } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-const Sidebar = ({ setContent }) => {
-  const navigate = useNavigate("/");
-  const [isSidebarOpen, setSidebarOpen] = useState(true); // Sidebar visibility
-  const [isUserDropdownOpen, setUserDropdownOpen] = useState(false); // Users dropdown visibility
-  const [isStoreDropdownOpen, setStoreDropdownOpen] = useState(false); // Users dropdown visibility
-  const [isPlacesDropdownOpen, setPlacesDropdownOpen] = useState(false); // Users dropdown visibility
-  const [isMessageDropdownOpen, setMessageDropdownOpen] = useState(false); // Users dropdown visibility
-  const handleHelpClick = (event) => {
-    event.preventDefault(); // Prevent default link behavior
-    window.open("http://195.35.20.75/help/", "_blank", "noopener noreferrer");
-  };
+const Sidebar = () => {
+  const navigate = useNavigate();
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const [isUserDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [isStoreDropdownOpen, setStoreDropdownOpen] = useState(false);
+  const [isPlacesDropdownOpen, setPlacesDropdownOpen] = useState(false);
+  const [isMessageDropdownOpen, setMessageDropdownOpen] = useState(false);
+  const [isReportsDropdownOpen, setReportsDropdownOpen] = useState(false);
+
+  // Reports list
+  const reportsList = [
+    { name: "Profit & Loss Report", path: "/reports/profit-loss" },
+    { name: "Sales & Payment Report", path: "/reports/sales-payment" },
+    { name: "Customer Orders", path: "/reports/customer-orders" },
+    { name: "GSTR-1 Report", path: "/reports/gstr-1" },
+    { name: "GSTR-2 Report", path: "/reports/gstr-2" },
+    { name: "Sales GST Report", path: "/reports/sales-gst" },
+    { name: "Purchase GST Report", path: "/reports/purchase-gst" },
+    { name: "Sales Tax Report", path: "/reports/sales-tax" },
+    { name: "Purchase Tax Report", path: "/reports/purchase-tax" },
+  ];
 
   return (
-    <div className="flex">
-      {/* Hamburger Menu */}
-      <div className="p-4 bg-gray-900 text-white cursor-pointer">
+    
+    <div className="flex flex-col bg-gray-900 text-white w-64 h-screen p-6 transition-all duration-300 ease-in-out lg:w-64 sm:w-16">
+      {/* Sidebar Header */}
+      <div
+        className="text-xl font-semibold mb-6 cursor-pointer hover:text-gray-400"
+        onClick={() => navigate("/dashboard")}
+      >
+        Dashboard
+      </div>
+
+      {/* Hamburger for Mobile */}
+      <div className="lg:hidden mb-4">
         <FaBars
           size={24}
           onClick={() => setSidebarOpen(!isSidebarOpen)}
-          className="hover:text-gray-400"
+          className="cursor-pointer hover:text-gray-400"
         />
       </div>
 
-      {/* Sidebar */}
-      <div
-        className={`${
-          isSidebarOpen ? "w-64" : "w-0"
-        } bg-gray-900 text-white h-full overflow-y-auto transition-all duration-300`}
-      >
-        {/* Sidebar Content */}
-        {isSidebarOpen && (
-          <div>
-            {/* Sidebar Title */}
-            <div className="p-4 text-xl font-bold border-b border-gray-700 flex justify-between cursor-pointer">
-              <span onClick={() => navigate("/dashboard")}>Dashboard</span>
-              {/* <FaTimes
-                size={20}
-                className="cursor-pointer hover:text-gray-400"
-                onClick={() => setSidebarOpen(false)}
-              /> */}
+      {/* Sidebar Menu Items */}
+      {isSidebarOpen && (
+        <ul className="space-y-4">
+          {/* Users Dropdown */}
+          <li>
+            <div
+              className="p-4 flex justify-between items-center hover:bg-gray-700 cursor-pointer transition-all duration-300 ease-in-out"
+              onClick={() => setUserDropdownOpen(!isUserDropdownOpen)}
+            >
+              <div className="flex items-center space-x-2">
+                <FaUsers />
+                <span>Users</span>
+              </div>
+              {isUserDropdownOpen ? <FaAngleUp /> : <FaAngleDown />}
+            </div>
+            {isUserDropdownOpen && (
+              <ul className="ml-6 space-y-2 bg-gray-800 rounded-lg shadow-md">
+                <li
+                  className="p-3 cursor-pointer hover:bg-gray-700 transition duration-200"
+                  onClick={() => navigate("/admin/user/list")}
+                >
+                  Users List
+                </li>
+                <li
+                  className="p-3 cursor-pointer hover:bg-gray-700 transition duration-200"
+                  onClick={() => navigate("/admin/role/list")}
+                >
+                  Roles List
+                </li>
+              </ul>
+            )}
+          </li>
+
+          {/* Stores Dropdown */}
+          <li>
+            <div
+              className="p-4 flex justify-between items-center hover:bg-gray-700 cursor-pointer transition-all duration-300 ease-in-out"
+              onClick={() => setStoreDropdownOpen(!isStoreDropdownOpen)}
+            >
+              <div className="flex items-center space-x-2">
+                <FaStore />
+                <span>Stores</span>
+              </div>
+              {isStoreDropdownOpen ? <FaAngleUp /> : <FaAngleDown />}
+            </div>
+            {isStoreDropdownOpen && (
+              <ul className="ml-6 space-y-2 bg-gray-800 rounded-lg shadow-md">
+                <li
+                  className="p-3 cursor-pointer hover:bg-gray-700 transition duration-200"
+                  onClick={() => navigate("/store/add")}
+                >
+                  Add Store
+                </li>
+                <li
+                  className="p-3 cursor-pointer hover:bg-gray-700 transition duration-200"
+                  onClick={() => navigate("/store/view")}
+                >
+                  Store List
+                </li>
+              </ul>
+            )}
+          </li>
+
+          {/* Reports Dropdown */}
+          <li>
+            <div
+              className="p-4 flex justify-between items-center hover:bg-gray-700 cursor-pointer transition-all duration-300 ease-in-out"
+              onClick={() => setReportsDropdownOpen(!isReportsDropdownOpen)}
+            >
+              <div className="flex items-center space-x-2">
+                <FaRegComment />
+                <span>Reports</span>
+              </div>
+              {isReportsDropdownOpen ? <FaAngleUp /> : <FaAngleDown />}
             </div>
 
-            {/* Sidebar Menu */}
-            <ul>
-              {/* Users Dropdown */}
-              <li>
-                <div
-                  className="p-4 flex justify-between items-center hover:bg-gray-700 cursor-pointer"
-                  onClick={() => setUserDropdownOpen(!isUserDropdownOpen)}
-                >
-                  <div className="flex items-center space-x-2">
-                    <FaUsers />
-                    <span>Users</span>
-                  </div>
-                  {isUserDropdownOpen ? <FaAngleUp /> : <FaAngleDown />}
-                </div>
-                {isUserDropdownOpen && (
-                  <ul className="ml-8 bg-gray-800">
-                    <li
-                      className="p-3 hover:bg-gray-700 cursor-pointer"
-                      onClick={() => navigate("/admin/user/list")}
-                    >
-                      Users List
-                    </li>
-                    <li
-                      className="p-3 hover:bg-gray-700 cursor-pointer"
-                      onClick={() => navigate("/admin/role/list")}
-                    >
-                      Roles List
-                    </li>
-                  </ul>
-                )}
-                <div
-                  className="p-4 flex justify-between items-center hover:bg-gray-700 cursor-pointer"
-                  onClick={() => setStoreDropdownOpen(!isStoreDropdownOpen)}
-                >
-                  <div className="flex items-center space-x-2">
-                    <FaUsers />
-                    <span>Stores</span>
-                  </div>
-                  {isStoreDropdownOpen ? <FaAngleUp /> : <FaAngleDown />}
-                </div>
-                {isStoreDropdownOpen && (
-                  <ul className="ml-8 bg-gray-800">
-                    <li
-                      className="p-3 hover:bg-gray-700 cursor-pointer"
-                      onClick={() => navigate("/store/add")}
-                    >
-                      Add Store
-                    </li>
-                    <li
-                      className="p-3 hover:bg-gray-700 cursor-pointer"
-                      onClick={() => navigate("/store/view")}
-                    >
-                      Store List
-                    </li>
-                  </ul>
-                )}
-                <div
-                  className="p-4 flex justify-between items-center hover:bg-gray-700 cursor-pointer"
-                  onClick={() => setPlacesDropdownOpen(!isPlacesDropdownOpen)}
-                >
-                  <div className="flex items-center space-x-2">
-                    <FaUsers />
-                    <span>Places</span>
-                  </div>
-                  {isPlacesDropdownOpen ? <FaAngleUp /> : <FaAngleDown />}
-                </div>
-                {isPlacesDropdownOpen && (
-                  <ul className="ml-8 bg-gray-800">
-                    <li
-                      className="p-3 hover:bg-gray-700 cursor-pointer"
-                      onClick={() => navigate("/dashboard/Country")}
-                    >
-                      Countries List
-                    </li>
-                    <li
-                      className="p-3 hover:bg-gray-700 cursor-pointer"
-                      onClick={() => navigate("/dashboard/State")}
-                    >
-                      State List
-                    </li>
-                  </ul>
-                )}
-                <div
-                  className="p-4 flex justify-between items-center hover:bg-gray-700 cursor-pointer"
-                  onClick={() => setMessageDropdownOpen(!isMessageDropdownOpen)}
-                >
-                  <div className="flex items-center space-x-2">
-                    <FaUsers />
-                    <span>Message</span>
-                  </div>
-                  {isMessageDropdownOpen ? <FaAngleUp /> : <FaAngleDown />}
-                </div>
-                {isMessageDropdownOpen && (
-                  <ul className="ml-8 bg-gray-800">
-                    <li
-                      className="p-3 hover:bg-gray-700 cursor-pointer"
-                      onClick={() => navigate("/dashboard/user/message")}
-                    >
-                      Send Message
-                    </li>
-                    <li
-                      className="p-3 hover:bg-gray-700 cursor-pointer"
-                      onClick={() =>
-                        navigate("/dashboard/user/message-template")
-                      }
-                    >
-                      Messaging Templates
-                    </li>
-                  </ul>
-                )}
-              </li>
+            {isReportsDropdownOpen && (
+              <ul className="ml-6 space-y-2 bg-gray-800 rounded-lg shadow-md max-h-60 overflow-y-auto">
+                {reportsList.map((report, index) => (
+                  <li
+                    key={index}
+                    className="p-3 cursor-pointer hover:bg-gray-700 transition duration-200"
+                    onClick={() => navigate(report.path)}
+                  >
+                    {report.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
 
-              {/* Static Menu Items */}
-              {/* <li
-                className="p-4 hover:bg-gray-700 cursor-pointer"
-                onClick={() => setContent("Sales")}
-              >
-                Sales
-              </li> */}
+          {/* Messages Dropdown */}
+          <li>
+            <div
+              className="p-4 flex justify-between items-center hover:bg-gray-700 cursor-pointer transition-all duration-300 ease-in-out"
+              onClick={() => setMessageDropdownOpen(!isMessageDropdownOpen)}
+            >
+              <span>Messages</span>
+              {isMessageDropdownOpen ? <FaAngleUp /> : <FaAngleDown />}
+            </div>
+            {isMessageDropdownOpen && (
+              <ul className="ml-6 space-y-2 bg-gray-800 rounded-lg shadow-md">
+                <li
+                  className="p-3 cursor-pointer hover:bg-gray-700 transition duration-200"
+                  onClick={() => navigate("/dashboard/user/message")}
+                >
+                  Send Message
+                </li>
+                <li
+                  className="p-3 cursor-pointer hover:bg-gray-700 transition duration-200"
+                  onClick={() => navigate("/dashboard/user/message-template")}
+                >
+                  Messaging Templates
+                </li>
+              </ul>
+            )}
+          </li>
 
-              {/* <li
-                className="p-4 hover:bg-gray-700 cursor-pointer"
-                onClick={() => setContent("Contacts")}
-              >
-                Contacts
-              </li> */}
-              <li
-                className="p-4 hover:bg-gray-700 cursor-pointer"
-                onClick={() => setContent("Advance")}
-              >
-                Reports
-              </li>
-              <li
-                className="p-4 hover:bg-gray-700 cursor-pointer"
-                onClick={() => setContent("Coupons")}
-              >
-                Setting
-              </li>
-              <li
-                className="p-4 hover:bg-gray-700 cursor-pointer"
-                onClick={handleHelpClick}
-              >
-                Help
-              </li>
-            </ul>
-          </div>
-        )}
-      </div>
+          {/* Static Menu Items */}
+          <li
+            className="p-4 hover:bg-gray-700 cursor-pointer transition-all duration-300 ease-in-out"
+            onClick={() => navigate("/settings")}
+          >
+            <div className="flex items-center space-x-2">
+              <FaCog />
+              <span>Settings</span>
+            </div>
+          </li>
+
+          <li
+            className="p-4 hover:bg-gray-700 cursor-pointer transition-all duration-300 ease-in-out"
+            onClick={() => window.open("http://195.35.20.75/help/", "_blank")}
+          >
+            <div className="flex items-center space-x-2">
+              <FaRegComment />
+              <span>Help</span>
+            </div>
+          </li>
+        </ul>
+      )}
     </div>
   );
 };
 
 export default Sidebar;
-// =====================

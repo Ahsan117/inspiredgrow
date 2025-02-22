@@ -172,7 +172,7 @@ const RoleList = () => {
     const fetchRoles = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/admincreatingrole/api/roles"
+          "http://192.168.1.13:5000/admincreatingrole/api/roles"
         );
         setRoles(response.data);
       } catch (error) {

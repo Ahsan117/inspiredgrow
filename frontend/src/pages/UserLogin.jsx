@@ -13,13 +13,14 @@ const UserLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/admiaddinguser/userlogin", user);
+      await axios.post("http://192.168.1.13:5000/admiaddinguser/userlogin", user, { withCredentials: true });
       alert("User logged in successfully!");
       navigate("/dashboard");
     } catch (err) {
       alert("Login failed.");
     }
   };
+  
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">

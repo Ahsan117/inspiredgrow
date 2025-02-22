@@ -63,7 +63,9 @@ const AdminLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/auth/login", admin);
+      // Make sure withCredentials is set to true
+      const res = await axios.post("http://192.168.1.13:5000/auth/login", admin, { withCredentials: true });
+      
       localStorage.setItem("token", res.data.token);
       alert("Login successful!");
       navigate("/dashboard");
@@ -71,6 +73,7 @@ const AdminLogin = () => {
       alert("Login failed. Check your credentials.");
     }
   };
+  
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">

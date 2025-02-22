@@ -12,7 +12,11 @@ const storeRoutes = require("./routes/storeRoutes");
 const app = express();
 
 // Middlewares
-app.use(cors());  // Enable Cross-Origin Resource Sharing
+// Backend (Node.js example)
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://192.168.1.13:3000'],
+  credentials: true
+}));  // Enable Cross-Origin Resource Sharing
 app.use(express.json());  // Middleware to parse incoming JSON requests
 
 // MongoDB Connection

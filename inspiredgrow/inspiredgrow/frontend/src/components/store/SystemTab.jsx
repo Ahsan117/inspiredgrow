@@ -26,7 +26,7 @@ const SystemTab = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/admin/Store/add/systemzone",
+        "http://192.168.1.13:5000/admin/Store/add/systemzone",
         {
           method: "POST",
           headers: {

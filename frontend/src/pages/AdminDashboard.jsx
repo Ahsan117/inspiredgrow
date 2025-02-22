@@ -1,52 +1,27 @@
-// import { useNavigate } from "react-router-dom";
-// import Navbar from "../components/Navbar.jsx";
-// import Sidebar from "../components/Sidebar.jsx";
-// import AddUser from "../components/AddUser.jsx";
-
-// const AdminDashboard = () => {
-//   const navigate = useNavigate();
-
-//   const handleLogout = () => {
-//     localStorage.removeItem("token");
-//     navigate("/admin-login");
-//   };
-
-//   return (
-//     <div>
-//       <Navbar />
-//       <div style={{ display: "flex" }}>
-//         <Sidebar />
-//         <div style={{ padding: "20px" }}>
-//           <h2>Admin Dashboard</h2>
-//           <AddUser />
-//           <button onClick={handleLogout}>Logout</button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default AdminDashboard;
-import AddUser from "../components/AddUser";
+// src/pages/AdminDashboard.jsx
+import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
-const AdminDashboard = () => {
+function AdminDashboard() {
+  // Control sidebar state here (false means hidden by default on mobile)
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+
   return (
-    <div className="flex flex-col h-screen">
-      <Navbar />
-      <div className="flex flex-grow">
-        <Sidebar />
-        <div className="p-6 w-full">
-          <h2 className="text-2xl font-bold text-gray-700 mb-4">
-            Admin Dashboard
-          </h2>
-          {/* <AddUser /> */}
-          {/* <AddUser /> */}
-        </div>
+    <div className={`relative min-h-screen ${isSidebarOpen ? "sidebar-open" : ""}`}>
+      {/* Navbar receives the state & setter */}
+      <Navbar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+      {/* Sidebar just needs to know if it’s open */}
+      <Sidebar isSidebarOpen={isSidebarOpen} />
+
+      {/* Main Content */}
+      <div className="pt-20 p-6">
+        <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
+        {/* Your main dashboard content goes here */}
       </div>
     </div>
   );
-};
+}
 
 export default AdminDashboard;
