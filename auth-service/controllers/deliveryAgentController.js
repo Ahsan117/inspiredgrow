@@ -2,12 +2,12 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const DeliveryAgent = require("../models/deliveryAgentModel");
 
-// ✅ Generate JWT Token
+
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 };
 
-// ✅ Register Delivery Agent
+
 const registerAgent = async (req, res) => {
   try {
     const { name, email, password, phone } = req.body;
@@ -27,7 +27,7 @@ const registerAgent = async (req, res) => {
   }
 };
 
-// ✅ Login Delivery Agent (Email & Password)
+
 const loginAgent = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -45,7 +45,7 @@ const loginAgent = async (req, res) => {
   }
 };
 
-// ✅ Check if Delivery Agent is Already Registered
+
 const checkIfRegistered = async (req, res) => {
   try {
     const { email } = req.body;
