@@ -2,10 +2,10 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const Customer = require("../models/customerModel");
 
-// ✅ Generate JWT Token (Fix: Use .env instead of hardcoded "secret")
+
 const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-// ✅ Register Customer
+
 const registerCustomer = async (req, res) => {
   try {
     const { name, email, password, phone } = req.body;
@@ -25,7 +25,7 @@ const registerCustomer = async (req, res) => {
   }
 };
 
-// ✅ Login Customer
+
 const loginCustomer = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -46,7 +46,7 @@ const loginCustomer = async (req, res) => {
 // ✅ Generate OTP
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
-// ✅ Send OTP for Login
+
 const sendOTP = async (req, res) => {
   try {
     const { email } = req.body;
@@ -67,7 +67,7 @@ const sendOTP = async (req, res) => {
   }
 };
 
-// ✅ Verify OTP and Login
+
 const verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -88,10 +88,10 @@ const verifyOTP = async (req, res) => {
   }
 };
 
-// ✅ NEW: Get Customer Profile (Protected Route)
+
 const getCustomerProfile = async (req, res) => {
   try {
-    const customer = await Customer.findById(req.user); // ✅ Fix: Use `req.user`
+    const customer = await Customer.findById(req.user); 
     if (!customer) return res.status(404).json({ message: "Customer not found" });
 
     res.json({
