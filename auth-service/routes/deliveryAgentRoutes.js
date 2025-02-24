@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post("/register", registerAgent);
 router.post("/login", loginAgent);
-router.post("/check", checkIfRegistered); // ✅ Check if already registered
+router.post("/check", checkIfRegistered);
 router.get("/profile", protect, getProfile);
 
 module.exports = router;
