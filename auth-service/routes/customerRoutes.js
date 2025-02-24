@@ -1,6 +1,6 @@
 const express = require("express");
 const { registerCustomer, loginCustomer, sendOTP, verifyOTP, getCustomerProfile } = require("../controllers/customerController");
-const { protect } = require("../middleware/authMiddleware"); // ✅ Import protect middleware
+const { protect } = require("../middleware/authMiddleware"); 
 
 const router = express.Router();
 
@@ -9,6 +9,6 @@ router.post("/login", loginCustomer);
 router.post("/send-otp", sendOTP);
 router.post("/verify-otp", verifyOTP);
 
-router.get("/profile", protect, getCustomerProfile); // ✅ NEW: Profile Route (Protected)
+router.get("/profile", protect, getCustomerProfile); 
 
 module.exports = router;
