@@ -2,10 +2,10 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const Customer = require("../models/customerModel");
 
-// Generate JWT Token
-const generateToken = (id) => jwt.sign({ id }, "secret", { expiresIn: "7d" });
+// ✅ Generate JWT Token (Fix: Use .env instead of hardcoded "secret")
+const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-// Customer Registration
+// ✅ Register Customer
 const registerCustomer = async (req, res) => {
   try {
     const { name, email, password, phone } = req.body;
@@ -25,7 +25,7 @@ const registerCustomer = async (req, res) => {
   }
 };
 
-// Customer Login with JWT
+// ✅ Login Customer
 const loginCustomer = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -43,10 +43,10 @@ const loginCustomer = async (req, res) => {
   }
 };
 
-// Generate OTP
+// ✅ Generate OTP
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
-// Send OTP for Login
+// ✅ Send OTP for Login
 const sendOTP = async (req, res) => {
   try {
     const { email } = req.body;
@@ -59,7 +59,6 @@ const sendOTP = async (req, res) => {
     customer.otpExpires = new Date(Date.now() + 10 * 60000); // OTP valid for 10 min
     await customer.save();
 
-    // Send OTP via email/SMS (mock response)
     console.log(`OTP for ${email}: ${otp}`);
 
     res.json({ message: "OTP sent successfully" });
@@ -68,7 +67,7 @@ const sendOTP = async (req, res) => {
   }
 };
 
-// Verify OTP and Login
+// ✅ Verify OTP and Login
 const verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -89,4 +88,22 @@ const verifyOTP = async (req, res) => {
   }
 };
 
-module.exports = { registerCustomer, loginCustomer, sendOTP, verifyOTP };
+// ✅ NEW: Get Customer Profile (Protected Route)
+const getCustomerProfile = async (req, res) => {
+  try {
+    const customer = await Customer.findById(req.user); // ✅ Fix: Use `req.user`
+    if (!customer) return res.status(404).json({ message: "Customer not found" });
+
+    res.json({
+      name: customer.name,
+      email: customer.email,
+      phone: customer.phone,
+      createdAt: customer.createdAt
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ✅ Export All Functions
+module.exports = { registerCustomer, loginCustomer, sendOTP, verifyOTP, getCustomerProfile };

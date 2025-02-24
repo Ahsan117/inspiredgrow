@@ -1,73 +1,135 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios"; // Import Axios
+import "bootstrap/dist/css/bootstrap.min.css"; // Bootstrap for styling
 
 const CustomerOrders = () => {
   const [customerName, setCustomerName] = useState("");
   const [tillDate, setTillDate] = useState("");
+  const [orders, setOrders] = useState([]); // Store fetched orders
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  // Example order data for the table
-  const orderData = {
-    records: [
-      {
-        customerName: "John Doe",
-        lastOrderDate: "2025-02-21",
-        orderId: "ORD123",
-        lastOrderInDays: 5,
-      },
-      {
-        customerName: "Jane Smith",
-        lastOrderDate: "2025-02-15",
-        orderId: "ORD124",
-        lastOrderInDays: 10,
-      },
-    ],
+  // Function to fetch orders from backend
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      // Make API request to backend
+      const response = await axios.get("http://localhost:5000/api/orders", {
+        params: {
+          customerName: customerName || undefined,
+          tillDate: tillDate || undefined,
+        },
+      });
+
+      setOrders(response.data); // Update orders state with API response
+    } catch (err) {
+      setError("Failed to fetch orders. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800">Customer Orders</h2>
+  // Call fetchOrders when component loads
+  useEffect(() => {
+    fetchOrders();
+  }, []); // Runs once when the component mounts
 
-      {/* Filters: Customer Name and Till Date */}
-      <div className="mb-6 flex flex-col sm:flex-row gap-4">
-        <input
-          type="text"
-          placeholder="Customer Name"
-          value={customerName}
-          onChange={(e) => setCustomerName(e.target.value)}
-          className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/3"
-        />
-        <input
-          type="date"
-          value={tillDate}
-          onChange={(e) => setTillDate(e.target.value)}
-          className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/3"
-        />
+  return (
+    <div className="container-fluid p-3">
+      {/* Page Title */}
+      <h4 className="fw-bold">Customer Orders</h4>
+
+      {/* Filter Box */}
+      <div className="card shadow-sm">
+        <div className="card-header bg-primary text-white">
+          <b>Please Enter Valid Information</b>
+        </div>
+        <div className="card-body">
+          <div className="row">
+            {/* Customer Name Input */}
+            <div className="col-md-6">
+              <label className="fw-bold">Customer Name</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search Name/Mobile"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+              />
+            </div>
+
+            {/* Till Date Input */}
+            <div className="col-md-6">
+              <label className="fw-bold">Till Date</label>
+              <input
+                type="date"
+                className="form-control"
+                value={tillDate}
+                onChange={(e) => setTillDate(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="mt-3 d-flex gap-3">
+            <button className="btn btn-success px-4" onClick={fetchOrders}>
+              Show
+            </button>
+            <button className="btn btn-warning px-4">Close</button>
+          </div>
+        </div>
       </div>
 
-      {/* Table for Order Records */}
-      <div className="overflow-x-auto bg-white shadow-md rounded-lg">
-        <table className="min-w-full table-auto border-collapse border border-gray-300">
-          <thead className="bg-gray-100">
-            <tr className="text-gray-600 text-sm font-semibold">
-              <th className="px-4 py-3 text-left">Customer Name</th>
-              <th className="px-4 py-3 text-left">Last Order Date</th>
-              <th className="px-4 py-3 text-left">Order ID</th>
-              <th className="px-4 py-3 text-left">Last Order (in Days)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orderData.records.map((record, index) => (
-              <tr
-                key={index}
-                className="bg-white hover:bg-gray-50 transition-all duration-300 ease-in-out"
-              >
-                <td className="px-4 py-3 border">{record.customerName}</td>
-                <td className="px-4 py-3 border">{record.lastOrderDate}</td>
-                <td className="px-4 py-3 border">{record.orderId}</td>
-                <td className="px-4 py-3 border">{record.lastOrderInDays}</td>
+      {/* Error Message */}
+      {error && <div className="alert alert-danger mt-3">{error}</div>}
+
+      {/* Orders Table */}
+      <div className="card mt-3">
+        <div className="card-body p-0">
+          <table className="table table-bordered text-center">
+            <thead className="bg-primary text-white">
+              <tr>
+                <th>#</th>
+                <th>Customer Name</th>
+                <th>Last Order Date</th>
+                <th>Order ID</th>
+                <th>Last Order (in Days)</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan="5" className="text-center text-muted">
+                    Loading...
+                  </td>
+                </tr>
+              ) : orders.length > 0 ? (
+                orders.map((order, index) => (
+                  <tr key={order.orderId}>
+                    <td>{index + 1}</td>
+                    <td>{order.customerName}</td>
+                    <td>{order.lastOrderDate}</td>
+                    <td>{order.orderId}</td>
+                    <td>{order.lastOrderInDays}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className="text-center text-muted">
+                    No orders found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Export Button */}
+      <div className="text-end mt-2">
+        <button className="btn btn-primary">Export</button>
       </div>
     </div>
   );

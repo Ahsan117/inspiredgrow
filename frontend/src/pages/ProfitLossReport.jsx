@@ -1,245 +1,180 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const ProfitLossReport = () => {
-  // State for date range
-  const [startDate, setStartDate] = useState("2025-01-23"); // Initial start date
-  const [endDate, setEndDate] = useState("2025-02-21"); // Initial end date
+  const [startDate, setStartDate] = useState("2025-01-26");
+  const [endDate, setEndDate] = useState("2025-02-24");
+  const [reportData, setReportData] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Handlers to update date range
-  const handleStartDateChange = (e) => {
-    setStartDate(e.target.value);
-  };
-
-  const handleEndDateChange = (e) => {
-    setEndDate(e.target.value);
-  };
-
-  // Static report data
-  const reportData = {
-    grossProfit: 0.00,
-    netProfit: 0.00,
-    openingStock: 0.00,
-    purchase: {
-      totalPurchase: 0.00,
-      totalPurchaseTax: 0.00,
-      totalOtherCharges: 0.00,
-      totalDiscount: 0.00,
-      paidPayment: 0.00,
-      purchaseDue: 0.00,
-    },
-    purchaseReturn: {
-      totalPurchaseReturn: 0.00,
-      totalPurchaseReturnTax: 0.00,
-      totalOtherChargesReturn: 0.00,
-      totalDiscountReturn: 0.00,
-    },
-    totalExpense: 0.00,
-    sales: {
-      salesBeforeTax: 0.00,
-      totalSalesTax: 0.00,
-      totalOtherCharges: 0.00,
-      totalDiscount: 0.00,
-      couponDiscount: 0.00,
-      totalSales: 0.00,
-      paidPayment: 0.00,
-      salesDue: 0.00,
-    },
-    salesReturn: {
-      totalSalesReturn: 0.00,
-      totalSalesReturnTax: 0.00,
-      totalOtherChargesReturn: 0.00,
+  // Fetch data from backend
+  const fetchReportData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(
+        `https://your-backend-api.com/profit-loss-report?startDate=${startDate}&endDate=${endDate}`
+      );
+      setReportData(response.data);
+    } catch (err) {
+      setError("Failed to fetch data");
+    } finally {
+      setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchReportData();
+  }, [startDate, endDate]);
+
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800">Profit & Loss Report</h2>
+    <div className="container mt-4 p-4 bg-white shadow rounded">
+      <h2 className="text-dark mb-3">Profit & Loss Report</h2>
 
-      {/* Date Selector */}
-      <div className="mb-6">
-        <div className="flex items-center gap-2 text-sm">
-          <span className="font-medium text-gray-700">Select Date</span>
-          
-          {/* Start Date Picker */}
-          <input
-            type="date"
-            value={startDate}
-            onChange={handleStartDateChange}
-            className="border px-3 py-2 rounded-lg"
-          />
-          <span className="text-gray-600">-</span>
-
-          {/* End Date Picker */}
-          <input
-            type="date"
-            value={endDate}
-            onChange={handleEndDateChange}
-            className="border px-3 py-2 rounded-lg"
-          />
+      <div className="row mb-3">
+        <div className="col-md-6">
+          <label className="form-label">Select Date</label>
+          <div className="input-group">
+            <input
+              type="date"
+              className="form-control"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+            <span className="input-group-text">-</span>
+            <input
+              type="date"
+              className="form-control"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
         </div>
       </div>
 
-      {/* Gross Profit & Net Profit Table */}
-      <div className="mb-6">
-        <table className="w-full border-collapse border border-gray-300">
-          <thead>
-            <tr>
-              <th className="border border-gray-300 py-2 px-4 text-left">Item</th>
-              <th className="border border-gray-300 py-2 px-4 text-right">Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Gross Profit</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.grossProfit.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Net Profit</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.netProfit.toFixed(2)}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div className="d-flex justify-content-end mb-3">
+        <button className="btn btn-primary" onClick={fetchReportData}>Export</button>
       </div>
 
-      {/* Purchase Section Table */}
-      <div className="mb-6">
-        <table className="w-full border-collapse border border-gray-300">
-          <thead>
-            <tr>
-              <th className="border border-gray-300 py-2 px-4 text-left">Item</th>
-              <th className="border border-gray-300 py-2 px-4 text-right">Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Opening Stock</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.openingStock.toFixed(2)}</td>
-            </tr>
+      {loading && <p>Loading data...</p>}
+      {error && <p className="text-danger">{error}</p>}
 
-            {/* Purchase Subsection */}
-            <tr>
-              <td colSpan={2} className="border border-gray-300 py-2 px-4 bg-gray-100 font-bold">Purchase</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Total Purchase</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.purchase.totalPurchase.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Total Purchase Tax</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.purchase.totalPurchaseTax.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Total Other Charges of Purchase</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.purchase.totalOtherCharges.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Total Discount on Purchase</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.purchase.totalDiscount.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Paid Payment</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.purchase.paidPayment.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Purchase Due</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.purchase.purchaseDue.toFixed(2)}</td>
-            </tr>
+      <table className="table table-bordered">
+        <thead className="table-primary">
+          <tr>
+            <th>Category</th>
+            <th>Amount (₹)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Gross Profit</strong></td>
+            <td>{reportData.grossProfit || "0.00"}</td>
+          </tr>
+          <tr>
+            <td><strong>Net Profit</strong></td>
+            <td>{reportData.netProfit || "0.00"}</td>
+          </tr>
 
-            {/* Purchase Return Subsection */}
-            <tr>
-              <td colSpan={2} className="border border-gray-300 py-2 px-4 bg-gray-100 font-bold">Purchase Return</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Total Purchase Return</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.purchaseReturn.totalPurchaseReturn.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Total Purchase Return Tax</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.purchaseReturn.totalPurchaseReturnTax.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Total Other Charges of Purchase Return</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.purchaseReturn.totalOtherChargesReturn.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Total Discount on Purchase Return</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.purchaseReturn.totalDiscountReturn.toFixed(2)}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+          {/* Purchases Section */}
+          <tr>
+            <th colSpan="2" className="bg-light text-dark">Purchase</th>
+          </tr>
+          <tr>
+            <td>Total Purchase</td>
+            <td>{reportData.purchase?.totalPurchase || "0.00"}</td>
+          </tr>
+          <tr>
+            <td>Total Purchase Tax</td>
+            <td>{reportData.purchase?.totalPurchaseTax || "0.00"}</td>
+          </tr>
+          <tr>
+            <td>Total Other Charges</td>
+            <td>{reportData.purchase?.totalOtherCharges || "0.00"}</td>
+          </tr>
+          <tr>
+            <td>Total Discount on Purchase</td>
+            <td>{reportData.purchase?.totalDiscount || "0.00"}</td>
+          </tr>
+          <tr>
+            <td>Paid Payment</td>
+            <td>{reportData.purchase?.paidPayment || "0.00"}</td>
+          </tr>
+          <tr>
+            <td>Purchase Due</td>
+            <td>{reportData.purchase?.purchaseDue || "0.00"}</td>
+          </tr>
 
-      {/* Sales Section Table */}
-      <div className="mb-6">
-        <table className="w-full border-collapse border border-gray-300">
-          <thead>
-            <tr>
-              <th className="border border-gray-300 py-2 px-4 text-left">Item</th>
-              <th className="border border-gray-300 py-2 px-4 text-right">Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Total Expense</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.totalExpense.toFixed(2)}</td>
-            </tr>
+          {/* Purchase Return Section */}
+          <tr>
+            <th colSpan="2" className="bg-light text-dark">Purchase Return</th>
+          </tr>
+          <tr>
+            <td>Total Purchase Return</td>
+            <td>{reportData.purchaseReturn?.totalPurchaseReturn || "0.00"}</td>
+          </tr>
+          <tr>
+            <td>Total Purchase Return Tax</td>
+            <td>{reportData.purchaseReturn?.totalPurchaseReturnTax || "0.00"}</td>
+          </tr>
+          <tr>
+            <td>Total Discount on Purchase Return</td>
+            <td>{reportData.purchaseReturn?.totalDiscountReturn || "0.00"}</td>
+          </tr>
 
-            {/* Sales Subsection */}
-            <tr>
-              <td colSpan={2} className="border border-gray-300 py-2 px-4 bg-gray-100 font-bold">Sales</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Sales (Before Tax)</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.sales.salesBeforeTax.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Total Sales Tax</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.sales.totalSalesTax.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Total Other Charges of Sales</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.sales.totalOtherCharges.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Total Discount on Sales</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.sales.totalDiscount.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Coupon Discount</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.sales.couponDiscount.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Total Sales</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.sales.totalSales.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Paid Payment</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.sales.paidPayment.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Sales Due</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.sales.salesDue.toFixed(2)}</td>
-            </tr>
+          {/* Sales Section */}
+          <tr>
+            <th colSpan="2" className="bg-light text-dark">Sales</th>
+          </tr>
+          <tr>
+            <td>Sales (Before Tax)</td>
+            <td>{reportData.sales?.salesBeforeTax || "0.00"}</td>
+          </tr>
+          <tr>
+            <td>Total Sales Tax</td>
+            <td>{reportData.sales?.totalSalesTax || "0.00"}</td>
+          </tr>
+          <tr>
+            <td>Total Discount on Sales</td>
+            <td>{reportData.sales?.totalDiscount || "0.00"}</td>
+          </tr>
+          <tr>
+            <td>Coupon Discount</td>
+            <td>{reportData.sales?.couponDiscount || "0.00"}</td>
+          </tr>
+          <tr>
+            <td>Total Sales</td>
+            <td>{reportData.sales?.totalSales || "0.00"}</td>
+          </tr>
+          <tr>
+            <td>Paid Payment</td>
+            <td>{reportData.sales?.paidPayment || "0.00"}</td>
+          </tr>
+          <tr>
+            <td>Sales Due</td>
+            <td>{reportData.sales?.salesDue || "0.00"}</td>
+          </tr>
 
-            {/* Sales Return Subsection */}
-            <tr>
-              <td colSpan={2} className="border border-gray-300 py-2 px-4 bg-gray-100 font-bold">Sales Return</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Total Sales Return</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.salesReturn.totalSalesReturn.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Total Sales Return Tax</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.salesReturn.totalSalesReturnTax.toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td className="border border-gray-300 py-2 px-4">Total Other Charges of Sales Return</td>
-              <td className="border border-gray-300 py-2 px-4 text-right">{reportData.salesReturn.totalOtherChargesReturn.toFixed(2)}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+          {/* Sales Return Section */}
+          <tr>
+            <th colSpan="2" className="bg-light text-dark">Sales Return</th>
+          </tr>
+          <tr>
+            <td>Total Sales Return</td>
+            <td>{reportData.salesReturn?.totalSalesReturn || "0.00"}</td>
+          </tr>
+          <tr>
+            <td>Total Sales Return Tax</td>
+            <td>{reportData.salesReturn?.totalSalesReturnTax || "0.00"}</td>
+          </tr>
+          <tr>
+            <td>Total Other Charges of Sales Return</td>
+            <td>{reportData.salesReturn?.totalOtherChargesReturn || "0.00"}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 };

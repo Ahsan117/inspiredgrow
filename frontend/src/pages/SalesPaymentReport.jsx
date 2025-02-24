@@ -1,105 +1,114 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const SalesPaymentReport = () => {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [customerName, setCustomerName] = useState("");
+  const [reportData, setReportData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Example report data for the table
-  const reportData = {
-    records: [
-      {
-        name: "John Doe",
-        mobile: "1234567890",
-        previousDue: 100.00,
-        date: "2025-02-21",
-        invoiceNo: "INV123",
-        refBillNo: "RB123",
-        description: "Product A",
-        qty: 2,
-        billAmt: 200.00,
-        receive: 200.00,
-        total: 200.00,
-      },
-      {
-        name: "Jane Smith",
-        mobile: "0987654321",
-        previousDue: 150.00,
-        date: "2025-02-20",
-        invoiceNo: "INV124",
-        refBillNo: "RB124",
-        description: "Product B",
-        qty: 3,
-        billAmt: 300.00,
-        receive: 300.00,
-        total: 300.00,
-      },
-    ],
+  // Function to fetch data from backend
+  const fetchReportData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(
+        `https://your-backend-api.com/sales-payment-report?fromDate=${fromDate}&toDate=${toDate}&customer=${customerName}`
+      );
+      setReportData(response.data);
+    } catch (err) {
+      setError("Failed to fetch data");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800">Sales & Payment Report</h2>
+  useEffect(() => {
+    fetchReportData();
+  }, [fromDate, toDate, customerName]);
 
-      {/* Filters: Date and Customer Name */}
-      <div className="mb-6 flex flex-col sm:flex-row gap-4">
-        <input
-          type="date"
-          placeholder="From Date"
-          value={fromDate}
-          onChange={(e) => setFromDate(e.target.value)}
-          className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/3"
-        />
-        <input
-          type="date"
-          placeholder="To Date"
-          value={toDate}
-          onChange={(e) => setToDate(e.target.value)}
-          className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/3"
-        />
-        <input
-          type="text"
-          placeholder="Customer Name"
-          value={customerName}
-          onChange={(e) => setCustomerName(e.target.value)}
-          className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/3"
-        />
+  return (
+    <div className="container mt-4 p-4 bg-white shadow rounded">
+      <h2 className="text-dark mb-3">Sales & Payment Report</h2>
+
+      <div className="row g-3 mb-3">
+        <div className="col-md-4">
+          <label className="form-label">From Date</label>
+          <input
+            type="date"
+            className="form-control"
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
+          />
+        </div>
+        <div className="col-md-4">
+          <label className="form-label">To Date</label>
+          <input
+            type="date"
+            className="form-control"
+            value={toDate}
+            onChange={(e) => setToDate(e.target.value)}
+          />
+        </div>
+        <div className="col-md-4">
+          <label className="form-label">Customer Name</label>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search Name/Mobile"
+            value={customerName}
+            onChange={(e) => setCustomerName(e.target.value)}
+          />
+        </div>
       </div>
 
-      {/* Records Table */}
-      <div className="overflow-x-auto bg-white shadow-md rounded-lg">
-        <table className="min-w-full table-auto border-collapse border border-gray-300">
-          <thead className="bg-gray-100">
-            <tr className="text-gray-600 text-sm font-semibold">
-              <th className="px-4 py-3 text-left">Name</th>
-              <th className="px-4 py-3 text-left">Mobile</th>
-              <th className="px-4 py-3 text-left">Previous Due</th>
-              <th className="px-4 py-3 text-left">Date</th>
-              <th className="px-4 py-3 text-left">Invoice No.</th>
-              <th className="px-4 py-3 text-left">Referenced Bill No.</th>
-              <th className="px-4 py-3 text-left">Description</th>
-              <th className="px-4 py-3 text-left">Qty</th>
-              <th className="px-4 py-3 text-right">Bill Amt(₹)</th>
-              <th className="px-4 py-3 text-right">Receive(₹)</th>
-              <th className="px-4 py-3 text-right">Total(₹)</th>
+      <div className="d-flex gap-2">
+        <button className="btn btn-success" onClick={fetchReportData}>Show</button>
+        <button className="btn btn-warning">Close</button>
+      </div>
+
+      {loading && <p>Loading data...</p>}
+      {error && <p className="text-danger">{error}</p>}
+
+      <div className="mt-4">
+        <h5 className="fw-bold">Records Table</h5>
+        <table className="table table-bordered table-striped">
+          <thead className="table-primary">
+            <tr>
+              <th>#</th>
+              <th>Date</th>
+              <th>Invoice No.</th>
+              <th>Referenced Bill No.</th>
+              <th>Description</th>
+              <th>Qty</th>
+              <th>Bill Amt(₹)</th>
+              <th>Receive(₹)</th>
+              <th>Total(₹)</th>
             </tr>
           </thead>
           <tbody>
-            {reportData.records.map((record, index) => (
-              <tr key={index} className="bg-white hover:bg-gray-50 transition-all duration-300 ease-in-out">
-                <td className="px-4 py-3 border">{record.name}</td>
-                <td className="px-4 py-3 border">{record.mobile}</td>
-                <td className="px-4 py-3 border">{record.previousDue.toFixed(2)}</td>
-                <td className="px-4 py-3 border">{record.date}</td>
-                <td className="px-4 py-3 border">{record.invoiceNo}</td>
-                <td className="px-4 py-3 border">{record.refBillNo}</td>
-                <td className="px-4 py-3 border">{record.description}</td>
-                <td className="px-4 py-3 border">{record.qty}</td>
-                <td className="px-4 py-3 border text-right">{record.billAmt.toFixed(2)}</td>
-                <td className="px-4 py-3 border text-right">{record.receive.toFixed(2)}</td>
-                <td className="px-4 py-3 border text-right">{record.total.toFixed(2)}</td>
+            {reportData.length > 0 ? (
+              reportData.map((record, index) => (
+                <tr key={index}>
+                  <td>{index + 1}</td>
+                  <td>{record.date}</td>
+                  <td>{record.invoiceNo}</td>
+                  <td>{record.refBillNo}</td>
+                  <td>{record.description}</td>
+                  <td>{record.qty}</td>
+                  <td>{record.billAmt}</td>
+                  <td>{record.receive}</td>
+                  <td>{record.total}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="9" className="text-center">No records found</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
