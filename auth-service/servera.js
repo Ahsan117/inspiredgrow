@@ -10,7 +10,7 @@ app.use(express.json());
 console.log("🔹 MONGO_URI from .env:", process.env.MONGO_URI);
 console.log("🔹 JWT_SECRET from .env:", process.env.JWT_SECRET);
 
-// ✅ Connect to MongoDB
+
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -18,9 +18,9 @@ mongoose.connect(process.env.MONGO_URI, {
   .then(() => console.log("✅ MongoDB Connected"))
   .catch(err => console.error("❌ MongoDB Connection Error:", err));
 
-// ✅ Register Routes
+
 app.use("/customer", customerRoutes);
-app.use("/delivery-agent", deliveryAgentRoutes); // ✅ Added Delivery Agent Routes
+app.use("/delivery-agent", deliveryAgentRoutes); 
 
 const PORT = process.env.PORT || 5001;
 
