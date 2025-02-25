@@ -11,10 +11,12 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar bg-gray-900 text-white px-6 py-4 flex justify-between items-center shadow-md">
+    <nav className="bg-gray-900 text-white px-6 py-4 flex justify-between items-center w-full fixed top-0 left-0 z-50">
+
+
       {/* Left side: logo */}
       <div className="flex items-center">
-        <h2 className="text-xl font-semibold">Admin Panel</h2>
+        <h2 className="text-xl font-semibold ml-5">Admin Panel</h2>
       </div>
 
       {/* Right side: profile dropdown */}
@@ -28,7 +30,7 @@ const Navbar = () => {
             alt="Profile"
             className="w-10 h-10 rounded-full border-2 border-gray-300 cursor-pointer hover:opacity-80"
           />
-          <span className="text-sm text-white">Profile</span>
+          <span className="text-sm text-white mr-5">Profile</span>
         </div>
 
         {showDropdown && (

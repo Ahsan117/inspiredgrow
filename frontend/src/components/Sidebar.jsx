@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaBars, FaUsers, FaStore, FaCog, FaAngleDown, FaAngleUp, FaRegComment } from "react-icons/fa";
+import { FaBars, FaUsers, FaStore, FaCog, FaAngleDown, FaAngleUp, FaRegComment, FaHome } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
@@ -26,23 +26,38 @@ const Sidebar = () => {
 
   return (
     
-    <div className="flex flex-col bg-gray-900 text-white w-64 h-screen p-6 transition-all duration-300 ease-in-out lg:w-64 sm:w-16">
-      {/* Sidebar Header */}
-      <div
-        className="text-xl font-semibold mb-6 cursor-pointer hover:text-gray-400"
-        onClick={() => navigate("/dashboard")}
-      >
-        Dashboard
-      </div>
+    <div
+  className={`fixed left-0 top-16 bg-gray-900 text-white h-screen p-6 transition-all duration-300 ease-in-out ${
+    isSidebarOpen ? "w-64" : "w-16"
+  }`}
+>
 
       {/* Hamburger for Mobile */}
-      <div className="lg:hidden mb-4">
+    
+
+      <div className="mb-4">
         <FaBars
           size={24}
           onClick={() => setSidebarOpen(!isSidebarOpen)}
           className="cursor-pointer hover:text-gray-400"
         />
       </div>
+
+
+      {/* Sidebar Header */}
+      {isSidebarOpen && (
+  <div
+    className="p-4 flex items-center space-x-2 cursor-pointer hover:bg-gray-700 transition-all duration-300 ease-in-out"
+    onClick={() => navigate("/dashboard")}
+  >
+    <FaHome /> {/* Better Icon for Dashboard */}
+    <span>Dashboard</span>
+  </div>
+)}
+
+
+
+      
 
       {/* Sidebar Menu Items */}
       {isSidebarOpen && (
