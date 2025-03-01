@@ -89,3 +89,7 @@ button, .menu-item {
 body.sidebar-open {
   @apply overflow-hidden;
 }
+html, body {
+  height: 100%;
+  overflow: auto;
+}

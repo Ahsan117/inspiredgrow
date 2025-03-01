@@ -112,6 +112,7 @@ const UserList = () => {
   const [users, setUsers] = useState([]); // Ensure initial state is an array
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [isSidebarOpen, setSidebarOpen] = useState(false)
   const navigate = useNavigate();
 
   // Fetch user list from API
@@ -141,10 +142,14 @@ const UserList = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <Navbar />
-      <div className="flex flex-grow">
-        <Sidebar />
-        <div className="container mx-auto py-10 p-10">
+  <Navbar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
+  <div className="flex flex-grow mt-20">
+  <div className="w-64">
+  <Sidebar isSidebarOpen={isSidebarOpen} />
+    </div>
+    {/* Main content container taking remaining width */}
+    <div className="flex-grow container mx-auto py-10 p-10">
+
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold">Users List</h1>
             <button

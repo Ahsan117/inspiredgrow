@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import Axios
 import "bootstrap/dist/css/bootstrap.min.css"; // Bootstrap for styling
+import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 
 const CustomerOrders = () => {
   const [customerName, setCustomerName] = useState("");
@@ -8,6 +10,7 @@ const CustomerOrders = () => {
   const [orders, setOrders] = useState([]); // Store fetched orders
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   // Function to fetch orders from backend
   const fetchOrders = async () => {
@@ -37,6 +40,14 @@ const CustomerOrders = () => {
   }, []); // Runs once when the component mounts
 
   return (
+    <div className="flex flex-col h-screen">
+      {/* Navbar with sidebar state passed */}
+      <Navbar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <div className="flex flex-grow mt-20">
+        {/* Sidebar */}
+        <div className="w-64">
+          <Sidebar isSidebarOpen={isSidebarOpen} />
+        </div>
     <div className="container-fluid p-3">
       {/* Page Title */}
       <h4 className="fw-bold">Customer Orders</h4>
@@ -131,6 +142,8 @@ const CustomerOrders = () => {
       <div className="text-end mt-2">
         <button className="btn btn-primary">Export</button>
       </div>
+    </div>
+    </div>
     </div>
   );
 };

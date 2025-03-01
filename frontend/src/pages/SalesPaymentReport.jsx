@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 
 const SalesPaymentReport = () => {
   const [fromDate, setFromDate] = useState("");
@@ -9,6 +11,7 @@ const SalesPaymentReport = () => {
   const [reportData, setReportData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   // Function to fetch data from backend
   const fetchReportData = async () => {
@@ -31,6 +34,14 @@ const SalesPaymentReport = () => {
   }, [fromDate, toDate, customerName]);
 
   return (
+    <div className="flex flex-col h-screen">
+      {/* Navbar with sidebar state passed */}
+      <Navbar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <div className="flex flex-grow mt-20">
+        {/* Sidebar */}
+        <div className="w-64">
+          <Sidebar isSidebarOpen={isSidebarOpen} />
+        </div>
     <div className="container mt-4 p-4 bg-white shadow rounded">
       <h2 className="text-dark mb-3">Sales & Payment Report</h2>
 
@@ -112,6 +123,8 @@ const SalesPaymentReport = () => {
           </tbody>
         </table>
       </div>
+    </div>
+    </div>
     </div>
   );
 };

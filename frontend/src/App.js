@@ -13,6 +13,7 @@ import Reports from "./pages/Reports";
 import ProfitLossReport from "./pages/ProfitLossReport";
 import SalesPaymentReport from "./pages/SalesPaymentReport";
 import CustomerOrders from "./pages/CustomerOrders";
+import ProtectedRoute from "./componentsProtectedRoute";
 
 function App() {
   return (

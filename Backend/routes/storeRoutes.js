@@ -1,10 +1,10 @@
 const express = require("express");
 const Store = require("../models/storeModel");
-const Role = require("../models/roleModel");
 const storeSystem = require("../models/storeSystemModel");
-const router = express.Router();
+const { authMiddleware, hasPermission } = require("../middleware/authMiddleware");
 
-router.post("/add/Store", async (req, res) => {
+const router = express.Router();
+router.post("/add/Store", authMiddleware, hasPermission("Stores", "Add"), async (req, res) => {
   try {
     const {
       StoreCode,
@@ -23,6 +23,7 @@ router.post("/add/Store", async (req, res) => {
       PostCode,
       Address,
     } = req.body;
+    
     const newData = new Store({
       StoreCode,
       StoreName,
@@ -40,13 +41,14 @@ router.post("/add/Store", async (req, res) => {
       PostCode,
       Address,
     });
+    
     const result = await newData.save();
     res.status(200).send({ message: "Data Saved Successfully", result });
   } catch (error) {
-    res.status(500).send({ message: "Internal server Error", error });
+    res.status(500).send({ message: "Internal Server Error", error });
   }
 });
-router.get("/add/store", async (req, res) => {
+router.get("/add/store", authMiddleware, hasPermission("Stores", "View"), async (req, res) => {
   try {
     const result = await Store.find({});
     res.status(200).send({ message: "Data Fetched Successfully", result });
@@ -54,7 +56,7 @@ router.get("/add/store", async (req, res) => {
     res.status(500).send({ message: "Internal Server Error", err });
   }
 });
-router.post("/add/systemzone", async (req, res) => {
+router.post("/add/systemzone", authMiddleware, hasPermission("systemzone", "Add"), async (req, res) => {
   try {
     const {
       Timezone,
@@ -66,7 +68,8 @@ router.post("/add/systemzone", async (req, res) => {
       DecimalforQuantity,
       Language,
     } = req.body;
-    const result = new storeSystem({
+    
+    const newSystemZone = new storeSystem({
       Timezone,
       Dateformat,
       TimeFormat,
@@ -76,10 +79,12 @@ router.post("/add/systemzone", async (req, res) => {
       DecimalforQuantity,
       Language,
     });
-    const data = await result.save();
-    res.status(200).send({ message: "Data successfully", data });
+    
+    const data = await newSystemZone.save();
+    res.status(200).send({ message: "Data saved successfully", data });
   } catch (error) {
     res.status(500).send({ message: "Internal Server Error", error });
   }
 });
+
 module.exports = router;

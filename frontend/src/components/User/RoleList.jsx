@@ -162,28 +162,50 @@ import Sidebar from "../Sidebar";
 import axios from "axios";
 
 const RoleList = () => {
-  const [roles, setRoles] = useState([]);
+  const [roles, setRoles] = useState([]); // Ensure roles starts as an array
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRoles = async () => {
+      const token = localStorage.getItem("token"); // Get token from localStorage
+      if (!token) {
+        console.error("No token found. Redirecting to login...");
+        return;
+      }
+  
       try {
-        const response = await axios.get(
-          "http://192.168.1.13:5000/admincreatingrole/api/roles"
-        );
-        setRoles(response.data);
+        const response = await axios.get("http://192.168.1.13:5000/admincreatingrole/api/roles", {
+          headers: { Authorization: `Bearer ${token}` } // Attach token here
+        });
+  
+        console.log("API Response:", response.data);
+  
+        if (response.data && Array.isArray(response.data.roles)) {
+          setRoles(response.data.roles);
+        } else {
+          console.error("Unexpected API response:", response.data);
+          setRoles([]);
+        }
       } catch (error) {
-        console.error("Error fetching roles:", error);
+        console.error("Error fetching roles:", error.response?.data || error.message);
+        if (error.response?.status === 401) {
+          console.error("Unauthorized. Redirecting to login...");
+          localStorage.clear();
+          navigate("/");
+        }
+        setRoles([]);
       }
     };
+  
     fetchRoles();
   }, []);
+  
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentRoles = roles.slice(indexOfFirstItem, indexOfLastItem);
+  // Prevent slicing error by ensuring roles is an array
+  const currentRoles = Array.isArray(roles) ? roles.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage) : [];
 
   const totalPages = Math.ceil(roles.length / itemsPerPage);
 
@@ -193,9 +215,12 @@ const RoleList = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <Navbar />
-      <div className="flex flex-grow">
-        <Sidebar />
+      {/* Pass sidebar state to Navbar and Sidebar */}
+      <Navbar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <div className="flex flex-grow mt-20">
+        <div className="w-64">
+          <Sidebar isSidebarOpen={isSidebarOpen} />
+        </div>
         <div className="container mx-auto py-10 p-10">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold">Role List</h1>
@@ -206,41 +231,8 @@ const RoleList = () => {
               + Create User
             </button>
           </div>
-          {/* <table className="w-full border-collapse border border-black">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="px-4 py-2 text-left">#</th>
-                <th className="px-4 py-2 text-left">Store Name</th>
-                <th className="px-4 py-2 text-left">Role Name</th>
-                <th className="px-4 py-2 text-left">Description</th>
-                <th className="px-4 py-2 text-left">Permissions</th>
-                <th className="px-4 py-2 text-left">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentRoles.map((role, index) => (
-                <tr key={role._id} className="">
-                  <td className="px-4 py-2">{indexOfFirstItem + index + 1}</td>
-                  <td className="px-4 py-2">{role.storeName}</td>
-                  <td className="px-4 py-2">{role.roleName}</td>
-                  <td className="px-4 py-2">{role.description}</td>
-                  <td className="px-4 py-2">
-                    {role.permissions.map((perm) => (
-                      <div key={perm._id}>
-                        <strong>{perm.module}:</strong>{" "}
-                        {perm.actions.join(", ")}
-                      </div>
-                    ))}
-                  </td>
-                  <td className="px-4 py-2">
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                      Action
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table> */}
+
+          {/* Table for displaying roles */}
           <table className="w-full border-collapse border border-black">
             <thead>
               <tr className="bg-gray-200 border border-black">
@@ -253,38 +245,44 @@ const RoleList = () => {
               </tr>
             </thead>
             <tbody>
-              {currentRoles.map((role, index) => (
-                <tr key={role._id} className="border border-black">
-                  <td className="px-4 py-2 border border-black">
-                    {indexOfFirstItem + index + 1}
-                  </td>
-                  <td className="px-4 py-2 border border-black">
-                    {role.storeName}
-                  </td>
-                  <td className="px-4 py-2 border border-black">
-                    {role.roleName}
-                  </td>
-                  <td className="px-4 py-2 border border-black">
-                    {role.description}
-                  </td>
-                  <td className="px-4 py-2 border border-black">
-                    {role.permissions.map((perm) => (
-                      <div key={perm._id} className="">
-                        <strong>{perm.module}:</strong>{" "}
-                        {perm.actions.join(", ")}
-                      </div>
-                    ))}
-                  </td>
-                  <td className="px-4 py-2 border border-black">
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                      Action
-                    </button>
+              {currentRoles.length > 0 ? (
+                currentRoles.map((role, index) => (
+                  <tr key={role._id} className="border border-black">
+                    <td className="px-4 py-2 border border-black">
+                      {(currentPage - 1) * itemsPerPage + index + 1}
+                    </td>
+                    <td className="px-4 py-2 border border-black">{role.storeName || "N/A"}</td>
+                    <td className="px-4 py-2 border border-black">{role.roleName || "N/A"}</td>
+                    <td className="px-4 py-2 border border-black">{role.description || "No description"}</td>
+                    <td className="px-4 py-2 border border-black">
+                      {role.permissions && role.permissions.length > 0 ? (
+                        role.permissions.map((perm, permIndex) => (
+                          <div key={permIndex}>
+                            <strong>{perm.module}:</strong> {perm.actions.join(", ")}
+                          </div>
+                        ))
+                      ) : (
+                        <span>No Permissions</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-2 border border-black">
+                      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Action
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="px-4 py-2 text-center">
+                    No roles available
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
 
+          {/* Pagination */}
           <div className="flex justify-center mt-4">
             {Array.from({ length: totalPages }, (_, index) => index + 1).map(
               (pageNumber) => (
@@ -309,3 +307,4 @@ const RoleList = () => {
 };
 
 export default RoleList;
+

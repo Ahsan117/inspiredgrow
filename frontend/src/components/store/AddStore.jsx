@@ -6,12 +6,16 @@ import Sidebar from "../Sidebar.jsx";
 
 const AddStore = () => {
   const [activeTab, setActiveTab] = useState("store");
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="flex flex-col h-screen">
-      <Navbar />
-      <div className="flex flex-grow">
-        <Sidebar />
+      {/* Pass sidebar state to Navbar and Sidebar */}
+      <Navbar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <div className="flex flex-grow mt-20">
+        <div className="w-64">
+          <Sidebar isSidebarOpen={isSidebarOpen} />
+        </div>
 
         <div className="min-h-screen w-full bg-gray-100 p-6">
           <div className="text-[32px]">Store</div>

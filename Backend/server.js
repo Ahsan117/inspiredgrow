@@ -1,4 +1,4 @@
-require("dotenv").config();  // Load environment variables from .env file
+require("dotenv").config();  
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -8,18 +8,19 @@ const userRoutes = require("./routes/userRoutes");
 const UsersRoutes = require("./routes/UsersRoutes");
 const roleRoutes = require("./routes/roleRoutes");
 const storeRoutes = require("./routes/storeRoutes");
+const messageRoutes = require("./routes/messageRoutes");
 
 const app = express();
 
-// Middlewares
-// Backend (Node.js example)
+
 app.use(cors({
   origin: ['http://localhost:3000', 'http://192.168.1.13:3000'],
   credentials: true
-}));  // Enable Cross-Origin Resource Sharing
-app.use(express.json());  // Middleware to parse incoming JSON requests
+}));  
+app.use(express.json()); // ✅ Enables JSON body parsing
+app.use(express.urlencoded({ extended: true })); 
 
-// MongoDB Connection
+
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -28,15 +29,15 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log("Error connecting to MongoDB:", err));
 
-// Use Routes
 app.use("/auth", authRoutes);
 app.use("/admin", userRoutes);
 app.use("/admiaddinguser", UsersRoutes);
 app.use("/admincreatingrole", roleRoutes);
 app.use("/admin/Store", storeRoutes);
+app.use("/api/message", messageRoutes);
 
-// Start the server
-const PORT = process.env.PORT || 5000;
+
+const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

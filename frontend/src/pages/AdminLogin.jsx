@@ -64,16 +64,41 @@ const AdminLogin = () => {
     e.preventDefault();
     try {
       // Make sure withCredentials is set to true
-      const res = await axios.post("http://192.168.1.13:5000/auth/login", admin, { withCredentials: true });
-      
-      localStorage.setItem("token", res.data.token);
+      const res = await axios.post(
+        "http://192.168.1.13:5000/auth/login",
+        admin,
+        { withCredentials: true }
+      );
+
+      // Store token, role, and permissions in localStorage
+      // Store token, role, and permissions in localStorage
+localStorage.setItem("token", res.data.token);
+localStorage.setItem("role", res.data.role);
+
+// Ensure admin gets full permissions if backend doesn't send them
+const defaultAdminPermissions = [
+  "manageUsers",
+  "viewStores",
+  "viewReports",
+  "sendMessages",
+  "addStore",
+  "editStore",
+  "VIEW_ROLES" // Add this permission
+];
+
+localStorage.setItem(
+  "permissions",
+  JSON.stringify(res.data.permissions || (res.data.role === "admin" ? defaultAdminPermissions : []))
+);
+
+
+
       alert("Login successful!");
       navigate("/dashboard");
     } catch (err) {
       alert("Login failed. Check your credentials.");
     }
   };
-  
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">

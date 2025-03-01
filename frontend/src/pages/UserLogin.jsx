@@ -3,7 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const UserLogin = () => {
-  const [user, setUser] = useState({ Email: "", Password: "" });
+  // Use lowercase keys to match the backend's expected payload
+  const [user, setUser] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -13,14 +14,29 @@ const UserLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://192.168.1.13:5000/admiaddinguser/userlogin", user, { withCredentials: true });
+      const res = await axios.post(
+        "http://192.168.1.13:5000/admiaddinguser/userlogin",
+        user,
+        { withCredentials: true }
+      );
+
+      // The backend response is structured as:
+      // { message, token, user: { id, FirstName, LastName, Email, Role } }
+      localStorage.setItem("token", res.data.token);
+      // Store role from the user object
+      localStorage.setItem("role", res.data.user.Role);
+      // If permissions are returned, store them; otherwise, remove or adjust as needed
+      if (res.data.permissions) {
+        localStorage.setItem("permissions", JSON.stringify(res.data.permissions));
+      }
+
       alert("User logged in successfully!");
       navigate("/dashboard");
     } catch (err) {
+      console.error(err);
       alert("Login failed.");
     }
   };
-  
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
@@ -31,8 +47,8 @@ const UserLogin = () => {
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <input
-              type="Email"
-              name="Email"
+              type="email"
+              name="email"
               placeholder="Email"
               onChange={handleChange}
               required
@@ -41,7 +57,7 @@ const UserLogin = () => {
           </div>
           <div className="mb-6">
             <input
-              type="Password"
+              type="password"
               name="password"
               placeholder="Password"
               onChange={handleChange}

@@ -4,6 +4,7 @@ import Sidebar from "../Sidebar";
 import Navbar from "../Navbar";
 
 const StoreView = () => {
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const navigate = useNavigate("/");
@@ -101,9 +102,12 @@ const StoreView = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <Navbar />
-      <div className="flex flex-grow">
-        <Sidebar />
+      {/* Pass sidebar state to Navbar and Sidebar */}
+      <Navbar isSidebarOpen={isSidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <div className="flex flex-grow mt-20">
+        <div className="w-64">
+          <Sidebar isSidebarOpen={isSidebarOpen} />
+        </div>
 
         <div className="container mx-auto p-8">
           <div className="flex justify-between items-center mb-4">

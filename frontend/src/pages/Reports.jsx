@@ -6,7 +6,21 @@ const Reports = () => {
   const [selectedReport, setSelectedReport] = useState("");
   const [openReports, setOpenReports] = useState({});
 
-  // List of Reports
+  // Retrieve permissions from localStorage
+  const storedPermissions = localStorage.getItem("permissions");
+  const permissions = storedPermissions ? JSON.parse(storedPermissions) : [];
+
+  // Check if user has "view" permission for the "report" module
+  const canViewReports = permissions.some(
+    (perm) =>
+      perm.module.toLowerCase() === "report" &&
+      perm.actions.map((action) => action.toLowerCase()).includes("View")
+  );
+
+  if (!canViewReports) {
+    return <div>Insufficient permissions to view reports.</div>;
+  }
+
   const reportsList = [
     "Profit & Loss Report",
     "Sales & Payment Report",
@@ -36,7 +50,6 @@ const Reports = () => {
 
   const handleReportClick = (report) => {
     setSelectedReport(report);
-    // Toggle the selected report dropdown
     setOpenReports((prevState) => ({
       ...prevState,
       [report]: !prevState[report],
@@ -66,7 +79,9 @@ const Reports = () => {
             className="mt-4 p-4 border border-gray-300 rounded-lg bg-white shadow-md transition-all duration-300"
             style={{ width: "300px", display: "block" }}
           >
-            <h3 className="text-lg font-semibold">Details of {selectedReport}:</h3>
+            <h3 className="text-lg font-semibold">
+              Details of {selectedReport}:
+            </h3>
             <p>{`Here are the details of the ${selectedReport}.`}</p>
             <p>More details or content can be added here.</p>
           </div>

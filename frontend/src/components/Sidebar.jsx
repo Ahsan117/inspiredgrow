@@ -1,15 +1,37 @@
-import { useState } from "react";
-import { FaBars, FaUsers, FaStore, FaCog, FaAngleDown, FaAngleUp, FaRegComment, FaHome } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import {
+  FaUsers,
+  FaStore,
+  FaCog,
+  FaAngleDown,
+  FaAngleUp,
+  FaRegComment,
+  FaHome,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-const Sidebar = () => {
+const Sidebar = ({ isSidebarOpen }) => {
   const navigate = useNavigate();
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isUserDropdownOpen, setUserDropdownOpen] = useState(false);
   const [isStoreDropdownOpen, setStoreDropdownOpen] = useState(false);
-  const [isPlacesDropdownOpen, setPlacesDropdownOpen] = useState(false);
   const [isMessageDropdownOpen, setMessageDropdownOpen] = useState(false);
   const [isReportsDropdownOpen, setReportsDropdownOpen] = useState(false);
+  const [permissions, setPermissions] = useState([]);
+
+  useEffect(() => {
+    const storedPermissions = localStorage.getItem("permissions");
+    if (storedPermissions) {
+      try {
+        setPermissions(JSON.parse(storedPermissions));
+      } catch (error) {
+        console.error("Error parsing permissions:", error);
+        setPermissions([]); // Default empty permissions
+      }
+    } else {
+      setPermissions([]); // Ensure it's always an array
+    }
+  }, []);
+  
 
   // Reports list
   const reportsList = [
@@ -24,48 +46,30 @@ const Sidebar = () => {
     { name: "Purchase Tax Report", path: "/reports/purchase-tax" },
   ];
 
+  if (!isSidebarOpen) return null; // Hide sidebar if closed
+
   return (
-    
     <div
-  className={`fixed left-0 top-16 bg-gray-900 text-white h-screen p-6 transition-all duration-300 ease-in-out ${
-    isSidebarOpen ? "w-64" : "w-16"
-  }`}
->
-
-      {/* Hamburger for Mobile */}
-    
-
-      <div className="mb-4">
-        <FaBars
-          size={24}
-          onClick={() => setSidebarOpen(!isSidebarOpen)}
-          className="cursor-pointer hover:text-gray-400"
-        />
+      className={`bg-gray-900 text-white h-screen p-6 w-64 transition-all duration-300 ease-in-out 
+      ${isSidebarOpen ? "fixed top-16 left-0 overflow-y-auto" : "absolute -left-64"} 
+      md:relative md:top-0 md:overflow-hidden`}
+    >
+      {/* Sidebar Header */}
+      <div
+        className="p-4 flex items-center space-x-2 cursor-pointer hover:bg-gray-700"
+        onClick={() => navigate("/dashboard")}
+      >
+        <FaHome />
+        <span>Dashboard</span>
       </div>
 
-
-      {/* Sidebar Header */}
-      {isSidebarOpen && (
-  <div
-    className="p-4 flex items-center space-x-2 cursor-pointer hover:bg-gray-700 transition-all duration-300 ease-in-out"
-    onClick={() => navigate("/dashboard")}
-  >
-    <FaHome /> {/* Better Icon for Dashboard */}
-    <span>Dashboard</span>
-  </div>
-)}
-
-
-
-      
-
       {/* Sidebar Menu Items */}
-      {isSidebarOpen && (
-        <ul className="space-y-4">
-          {/* Users Dropdown */}
+      <ul className="space-y-4">
+        {/* Users Dropdown */}
+        {permissions.includes("manageUsers") && (
           <li>
             <div
-              className="p-4 flex justify-between items-center hover:bg-gray-700 cursor-pointer transition-all duration-300 ease-in-out"
+              className="p-4 flex justify-between items-center hover:bg-gray-700 cursor-pointer"
               onClick={() => setUserDropdownOpen(!isUserDropdownOpen)}
             >
               <div className="flex items-center space-x-2">
@@ -77,13 +81,13 @@ const Sidebar = () => {
             {isUserDropdownOpen && (
               <ul className="ml-6 space-y-2 bg-gray-800 rounded-lg shadow-md">
                 <li
-                  className="p-3 cursor-pointer hover:bg-gray-700 transition duration-200"
+                  className="p-3 cursor-pointer hover:bg-gray-700"
                   onClick={() => navigate("/admin/user/list")}
                 >
                   Users List
                 </li>
                 <li
-                  className="p-3 cursor-pointer hover:bg-gray-700 transition duration-200"
+                  className="p-3 cursor-pointer hover:bg-gray-700"
                   onClick={() => navigate("/admin/role/list")}
                 >
                   Roles List
@@ -91,11 +95,13 @@ const Sidebar = () => {
               </ul>
             )}
           </li>
+        )}
 
-          {/* Stores Dropdown */}
+        {/* Stores Dropdown */}
+        {permissions.includes("viewStores") && (
           <li>
             <div
-              className="p-4 flex justify-between items-center hover:bg-gray-700 cursor-pointer transition-all duration-300 ease-in-out"
+              className="p-4 flex justify-between items-center hover:bg-gray-700 cursor-pointer"
               onClick={() => setStoreDropdownOpen(!isStoreDropdownOpen)}
             >
               <div className="flex items-center space-x-2">
@@ -107,13 +113,13 @@ const Sidebar = () => {
             {isStoreDropdownOpen && (
               <ul className="ml-6 space-y-2 bg-gray-800 rounded-lg shadow-md">
                 <li
-                  className="p-3 cursor-pointer hover:bg-gray-700 transition duration-200"
+                  className="p-3 cursor-pointer hover:bg-gray-700"
                   onClick={() => navigate("/store/add")}
                 >
                   Add Store
                 </li>
                 <li
-                  className="p-3 cursor-pointer hover:bg-gray-700 transition duration-200"
+                  className="p-3 cursor-pointer hover:bg-gray-700"
                   onClick={() => navigate("/store/view")}
                 >
                   Store List
@@ -121,11 +127,13 @@ const Sidebar = () => {
               </ul>
             )}
           </li>
+        )}
 
-          {/* Reports Dropdown */}
+        {/* Reports Dropdown */}
+        {permissions.includes("viewReports") && (
           <li>
             <div
-              className="p-4 flex justify-between items-center hover:bg-gray-700 cursor-pointer transition-all duration-300 ease-in-out"
+              className="p-4 flex justify-between items-center hover:bg-gray-700 cursor-pointer"
               onClick={() => setReportsDropdownOpen(!isReportsDropdownOpen)}
             >
               <div className="flex items-center space-x-2">
@@ -136,11 +144,15 @@ const Sidebar = () => {
             </div>
 
             {isReportsDropdownOpen && (
-              <ul className="ml-6 space-y-2 bg-gray-800 rounded-lg shadow-md max-h-60 overflow-y-auto">
+              <ul
+                className="ml-6 space-y-2 bg-gray-800 rounded-lg shadow-md 
+                md:max-h-none md:overflow-visible  
+                max-h-60 overflow-y-auto"
+              >
                 {reportsList.map((report, index) => (
                   <li
                     key={index}
-                    className="p-3 cursor-pointer hover:bg-gray-700 transition duration-200"
+                    className="p-3 cursor-pointer hover:bg-gray-700"
                     onClick={() => navigate(report.path)}
                   >
                     {report.name}
@@ -149,11 +161,13 @@ const Sidebar = () => {
               </ul>
             )}
           </li>
+        )}
 
-          {/* Messages Dropdown */}
+        {/* Messages Dropdown */}
+        {permissions.includes("sendMessages") && (
           <li>
             <div
-              className="p-4 flex justify-between items-center hover:bg-gray-700 cursor-pointer transition-all duration-300 ease-in-out"
+              className="p-4 flex justify-between items-center hover:bg-gray-700 cursor-pointer"
               onClick={() => setMessageDropdownOpen(!isMessageDropdownOpen)}
             >
               <span>Messages</span>
@@ -162,13 +176,13 @@ const Sidebar = () => {
             {isMessageDropdownOpen && (
               <ul className="ml-6 space-y-2 bg-gray-800 rounded-lg shadow-md">
                 <li
-                  className="p-3 cursor-pointer hover:bg-gray-700 transition duration-200"
+                  className="p-3 cursor-pointer hover:bg-gray-700"
                   onClick={() => navigate("/dashboard/user/message")}
                 >
                   Send Message
                 </li>
                 <li
-                  className="p-3 cursor-pointer hover:bg-gray-700 transition duration-200"
+                  className="p-3 cursor-pointer hover:bg-gray-700"
                   onClick={() => navigate("/dashboard/user/message-template")}
                 >
                   Messaging Templates
@@ -176,29 +190,29 @@ const Sidebar = () => {
               </ul>
             )}
           </li>
+        )}
 
-          {/* Static Menu Items */}
-          <li
-            className="p-4 hover:bg-gray-700 cursor-pointer transition-all duration-300 ease-in-out"
-            onClick={() => navigate("/settings")}
-          >
-            <div className="flex items-center space-x-2">
-              <FaCog />
-              <span>Settings</span>
-            </div>
-          </li>
+        {/* Static Menu Items */}
+        <li
+          className="p-4 hover:bg-gray-700 cursor-pointer"
+          onClick={() => navigate("/settings")}
+        >
+          <div className="flex items-center space-x-2">
+            <FaCog />
+            <span>Settings</span>
+          </div>
+        </li>
 
-          <li
-            className="p-4 hover:bg-gray-700 cursor-pointer transition-all duration-300 ease-in-out"
-            onClick={() => window.open("http://195.35.20.75/help/", "_blank")}
-          >
-            <div className="flex items-center space-x-2">
-              <FaRegComment />
-              <span>Help</span>
-            </div>
-          </li>
-        </ul>
-      )}
+        <li
+          className="p-4 hover:bg-gray-700 cursor-pointer"
+          onClick={() => window.open("http://195.35.20.75/help/", "_blank")}
+        >
+          <div className="flex items-center space-x-2">
+            <FaRegComment />
+            <span>Help</span>
+          </div>
+        </li>
+      </ul>
     </div>
   );
 };
